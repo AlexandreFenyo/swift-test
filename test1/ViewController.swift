@@ -43,19 +43,28 @@ class ViewController: UIViewController {
         }
         
         let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, CFSocketCallBackType.acceptCallBack.rawValue, cb, nil)
-        if let _ = s { print("CFSocketCreate returned OK") }
+        if (s == nil) {
+            print("CFSocketCreate returned nil")
+            return
+        }
 
         var sin = sockaddr_in(
             sin_len: UInt8(MemoryLayout<sockaddr_in>.size),
             sin_family: sa_family_t(AF_INET),
-            sin_port: in_port_t(8080),
+            sin_port: in_port_t(8888),
             sin_addr: in_addr(s_addr: INADDR_ANY),
             sin_zero: (0,0,0,0,0,0,0,0)
         )
-
-        let data = NSData(bytes: &sin, length: MemoryLayout<sockaddr_in>.size) as CFData
+        
+// https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/WorkingWithCocoaDataTypes.html#//apple_ref/doc/uid/TP40014216-CH6
+        
+        let data = NSData(bytes: &sin, length: MemoryLayout<sockaddr_in>.size) // as CFData
         let cfSocketError : CFSocketError = CFSocketSetAddress(s, data)
-
+        if (cfSocketError != CFSocketError.success) {
+            print("cfSocketError:", cfSocketError.rawValue)
+        } else {
+            print("socket bound")
+        }
     }
     
     @IBAction func action3(_ sender: UIButton) {

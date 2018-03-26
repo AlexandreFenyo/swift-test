@@ -46,7 +46,6 @@
                                 <state key="normal" title="action1"/>
                                 <connections>
                                     <action selector="action1:" destination="BYZ-38-t0r" eventType="touchUpInside" id="B6H-fV-SsL"/>
-                                    <action selector="bouton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8Va-vF-LiX"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YGJ-DI-PvQ">
@@ -55,7 +54,6 @@
                                 <state key="normal" title="action2"/>
                                 <connections>
                                     <action selector="action2:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7qD-mm-wIl"/>
-                                    <action selector="bouton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="F7A-oC-Jpc"/>
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="MjQ-Fn-zSk">
@@ -71,7 +69,6 @@
                                 <state key="normal" title="action3"/>
                                 <connections>
                                     <action selector="action3:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BYC-BW-gxX"/>
-                                    <action selector="bouton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7xY-2L-yUG"/>
                                 </connections>
                             </button>
                         </subviews>
