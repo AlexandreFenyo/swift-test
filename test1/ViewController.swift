@@ -40,9 +40,23 @@ class ViewController: UIViewController {
     @IBAction func action2(_ sender: UIButton) {
         func cb(_ s : CFSocket?, _ type : CFSocketCallBackType, _data : CFData?, _p1 : UnsafeRawPointer?, _p2 : UnsafeMutableRawPointer?) {
             print("Socket callback called")
+//            exit(1)
         }
         
-        let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, CFSocketCallBackType.acceptCallBack.rawValue, cb, nil)
+        var cbOptions : CFSocketCallBackType = [ .acceptCallBack, .connectCallBack, .dataCallBack, .readCallBack, .writeCallBack ]
+        print("cbOptions: \(cbOptions.rawValue)")
+        cbOptions = [ .readCallBack ]
+        print("raw: \(CFSocketCallBackType.readCallBack.rawValue)")
+        print("cbOptions: \(cbOptions.rawValue)")
+
+        let xcbOptions : CFSocketCallBackType = .acceptCallBack
+
+//        var context = CFSocketContext()
+        var context = CFSocketContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
+
+//        let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, CFSocketCallBackType.acceptCallBack.rawValue, cb, nil)
+//        let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, xcbOptions.rawValue, cb, nil)
+        let s : CFSocket! = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, xcbOptions.rawValue, cb, &context)
         if (s == nil) {
             print("CFSocketCreate returned nil")
             return
@@ -65,6 +79,13 @@ class ViewController: UIViewController {
         } else {
             print("socket bound")
         }
+        
+        // cb(nil, cbOptions, _data: nil, _p1: nil, _p2: nil)
+
+        let runLoopSourceRef = CFSocketCreateRunLoopSource(kCFAllocatorDefault, s, 0)
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSourceRef, CFRunLoopMode.defaultMode)
+
+        
     }
     
     @IBAction func action3(_ sender: UIButton) {
