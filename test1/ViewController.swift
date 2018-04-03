@@ -6,6 +6,9 @@
 //  Copyright © 2018 Alexandre Fenyo. All rights reserved.
 //
 
+// https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/WorkingWithCocoaDataTypes.html#//apple_ref/doc/uid/TP40014216-CH6
+// https://github.com/lzell/Harp/blob/master/HarpFramework/Socket.swift
+
 import UIKit
 import CoreFoundation
 
@@ -40,24 +43,11 @@ class ViewController: UIViewController {
     @IBAction func action2(_ sender: UIButton) {
         func cb(_ s : CFSocket?, _ type : CFSocketCallBackType, _data : CFData?, _p1 : UnsafeRawPointer?, _p2 : UnsafeMutableRawPointer?) {
             print("Socket callback called")
-//            exit(1)
         }
         
-        var cbOptions : CFSocketCallBackType = [ .acceptCallBack, .connectCallBack, .dataCallBack, .readCallBack, .writeCallBack ]
-        print("cbOptions: \(cbOptions.rawValue)")
-        cbOptions = [ .readCallBack ]
-        print("raw: \(CFSocketCallBackType.readCallBack.rawValue)")
-        print("cbOptions: \(cbOptions.rawValue)")
-
-        let xcbOptions : CFSocketCallBackType = .acceptCallBack
-
-//        var context = CFSocketContext()
-        var context = CFSocketContext(version: 0, info: nil, retain: nil, release: nil, copyDescription: nil)
-
-//        let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, CFSocketCallBackType.acceptCallBack.rawValue, cb, nil)
-//        let s : CFSocket! = CFSocketCreate(nil, PF_INET, SOCK_STREAM, IPPROTO_TCP, xcbOptions.rawValue, cb, nil)
-        let s : CFSocket! = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, xcbOptions.rawValue, cb, &context)
-        if (s == nil) {
+        var context = CFSocketContext()
+        let s : CFSocket! = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_STREAM, IPPROTO_TCP, CFSocketCallBackType.acceptCallBack.rawValue, cb, &context)
+        if s == nil {
             print("CFSocketCreate returned nil")
             return
         }
@@ -70,18 +60,14 @@ class ViewController: UIViewController {
             sin_zero: (0,0,0,0,0,0,0,0)
         )
         
-// https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/WorkingWithCocoaDataTypes.html#//apple_ref/doc/uid/TP40014216-CH6
-        
         let data = NSData(bytes: &sin, length: MemoryLayout<sockaddr_in>.size) // as CFData
         let cfSocketError : CFSocketError = CFSocketSetAddress(s, data)
-        if (cfSocketError != CFSocketError.success) {
+        if cfSocketError != CFSocketError.success {
             print("cfSocketError:", cfSocketError.rawValue)
         } else {
             print("socket bound")
         }
         
-        // cb(nil, cbOptions, _data: nil, _p1: nil, _p2: nil)
-
         let runLoopSourceRef = CFSocketCreateRunLoopSource(kCFAllocatorDefault, s, 0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSourceRef, CFRunLoopMode.defaultMode)
 
